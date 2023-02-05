@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class UserDetails(models.Model):
@@ -7,34 +9,30 @@ class UserDetails(models.Model):
     Personal details about the user who is registering with the system.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=255)
-    middle_name = models.CharField(max_length=255, blank=True, null=True)
-    last_name = models.CharField(max_length=255)
-    date_of_birth = models.DateField()
-    country_of_birth = models.CharField(max_length=255)
-    town_of_birth = models.CharField(max_length=255)
-    gender = models.CharField(max_length=255)
-    marital_status = models.CharField(max_length=255)
+    date_of_birth = models.DateField(blank=True, null=True)
+    country_of_birth = models.CharField(max_length=255, blank=True, null=True)
+    town_of_birth = models.CharField(max_length=255, blank=True, null=True)
+    gender = models.CharField(max_length=255, blank=True, null=True)
+    marital_status = models.CharField(max_length=255, blank=True, null=True)
     national_id_number = models.CharField(max_length=255, blank=True, null=True)
     passport_number = models.CharField(max_length=255, blank=True, null=True)
     driver_license_number = models.CharField(max_length=255, blank=True, null=True)
-    current_occupation = models.CharField(max_length=255)
-    is_minor = models.BooleanField(default=False)
-    primary_phone = models.CharField(max_length=255)
-    secondary_phone = models.CharField(max_length=255)
-    email_address = models.EmailField(max_length=255, blank=True, null=True)
+    current_occupation = models.CharField(max_length=255, blank=True, null=True)
+    is_minor = models.BooleanField(default=False, blank=True, null=True)
+    primary_phone = models.CharField(max_length=255, blank=True, null=True)
+    secondary_phone = models.CharField(max_length=255, blank=True, null=True)
     website = models.URLField(max_length=255, blank=True, null=True)
     facebook_profile_link = models.URLField(max_length=255, blank=True, null=True)
     instagram_profile_link = models.URLField(max_length=255, blank=True, null=True)
     linkedIn_profile_link = models.URLField(max_length=255, blank=True, null=True)
-    twitter_handle = models.CharField(max_length=255)
+    twitter_handle = models.CharField(max_length=255, blank=True, null=True)
     youtube_channel_link = models.URLField(max_length=255, blank=True, null=True)
-    residential_address = models.CharField(max_length=255)
-    postal_address = models.CharField(max_length=255)
+    residential_address = models.CharField(max_length=255, blank=True, null=True)
+    postal_address = models.CharField(max_length=255, blank=True, null=True)
     contact_person_name = models.CharField(max_length=255, null=True, blank=True)
     contact_person_phone = models.CharField(max_length=255, null=True, blank=True)
     contact_person_address = models.CharField(max_length=255, blank=True, null=True)
-    employment_status = models.CharField(max_length=255)
+    employment_status = models.CharField(max_length=255, blank=True, null=True)
     height = models.IntegerField(null=True, blank=True)
     # Educational details here
     year_completed_g7 = models.IntegerField(blank=True, null=True)  # Year a user completed their Grade Seven
@@ -49,7 +47,23 @@ class UserDetails(models.Model):
     points_obtained_g12 = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.user.first_name} {self.user.last_name}"
+
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        """
+        Create the user details profile whenever the new user is created.
+        :param instance:
+        :param created:
+        :param kwargs:
+        :return:
+        """
+        if created:
+            UserDetails.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.userdetails.save()
 
     class Meta:
         verbose_name_plural = 'UserDetails'

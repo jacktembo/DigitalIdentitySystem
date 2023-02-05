@@ -28,3 +28,5 @@ class InstitutionDocuments(models.Model):
 
     def __str__(self):
         return self.institution
+
+
