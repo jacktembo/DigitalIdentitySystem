@@ -93,11 +93,30 @@ class UserDocuments(models.Model):
     def __str__(self):
         return f"personal details for {self.user}"
 
+    @receiver(post_save, sender=User)
+    def create_user_documents(sender, instance, created, **kwargs):
+        """
+        Create the user documents whenever the new user is created.
+        :param instance:
+        :param created:
+        :param kwargs:
+        :return:
+        """
+        if created:
+            UserDocuments.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_documents(sender, instance, **kwargs):
+        instance.userdocuments.save()
+
     class Meta:
         verbose_name_plural = 'User Documents'
 
 
 class Biometrics(models.Model):
+    """
+    This is the models for all the biometrics of the user.
+    """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     fingerprint = models.BinaryField(unique=True)
     face = models.BinaryField(blank=True, null=True, unique=True)
@@ -106,3 +125,29 @@ class Biometrics(models.Model):
 
     class Meta:
         verbose_name_plural = 'Biometrics'
+
+    @receiver(post_save, sender=User)
+    def create_user_biometrics(sender, instance, created, **kwargs):
+        """
+        Create the user biometrics whenever the new user is created.
+        :param instance:
+        :param created:
+        :param kwargs:
+        :return:
+        """
+        if created:
+            Biometrics.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_biometrics(sender, instance, **kwargs):
+        instance.biometrics.save()
+
+
+class UserTransaction(models.Model):
+    """
+    Transactions authorized by the user
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_time_create = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)

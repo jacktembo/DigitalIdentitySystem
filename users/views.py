@@ -6,26 +6,33 @@ from rest_framework.generics import ListAPIView, ListCreateAPIView, \
     CreateAPIView, UpdateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView, \
     RetrieveDestroyAPIView, RetrieveUpdateAPIView
 from .models import *
+from rest_framework import viewsets
 from .serializers import *
 
 
-class UserDetailsView(ListCreateAPIView):
+class UserDetailsViewSet(viewsets.ModelViewSet):
     """
-    This View is responsible for listing and creating user profiles.
+    This Router is responsible for creating, reading, updating, and deleting
+    UserDetails objects.
+    You can get a specific user using the 'national_id_number' lookup field.
     """
-    def get_queryset(self):
-        return get_list_or_404(UserDetails)
+    queryset = UserDetails.objects.all()
 
-    def get_serializer_class(self):
-        return UserDetailsSerializer
+    serializer_class = UserDetailsSerializer
+
+    lookup_field = 'national_id_number'
 
 
-class UserDetailsDetail(RetrieveUpdateDestroyAPIView):
+class UserDocumentViewSet(viewsets.ModelViewSet):
+    queryset = UserDocuments.objects.all()
+    serializer_class = UserDocumentSerializer
 
-    def get_queryset(self):
-        return UserDetails.objects.all()
 
-    def get_serializer_class(self):
-        return UserDetailsSerializer
-    # lookup_field = 'pk'
+class BiometricsViewSet(viewsets.ModelViewSet):
+    """
+    The biometrics data for each field are passed as base64 encoded string,
+    and then saved as a Binary data in the database.
+    """
+    queryset = Biometrics.objects.all()
+    serializer_class = BiometricSerializer
 
