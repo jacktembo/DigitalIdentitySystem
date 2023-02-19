@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
+
 from .models import *
 import base64
 
@@ -116,3 +118,10 @@ class UserTransactionSerializer(serializers.ModelSerializer):
         fields = [
             'user', 'date_time_created', 'type', 'description'
         ]
+
+
+class UserTokenSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(source='key')
+    class Meta:
+        model = Token
+        fields = ['token',]

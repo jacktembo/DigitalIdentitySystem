@@ -14,4 +14,5 @@ router.register(r'transactions', UserTransactionViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('biometric-login', views.BiometricLogin.as_view()),
 ]
