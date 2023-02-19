@@ -59,6 +59,7 @@ class UserDocumentSerializer(serializers.ModelSerializer):
     proof_of_residence = serializers.FileField(use_url=True, required=False)
     resume = serializers.FileField(use_url=True, required=False)
     medical_certificate = serializers.FileField(use_url=True, required=False)
+    signature = serializers.FileField(use_url=True, required=False)
 
     class Meta:
         model = UserDocuments
@@ -66,7 +67,7 @@ class UserDocumentSerializer(serializers.ModelSerializer):
             'user', 'portrait_photo', 'national_id', 'passport', 'driving_license',
             'tax_payer_registration', 'g7_results', 'g9_results', 'g12_results',
             'school_diploma', 'school_degree', 'school_masters', 'school_phd',
-            'proof_of_residence', 'resume', 'medical_certificate',
+            'proof_of_residence', 'resume', 'medical_certificate', 'signature',
         ]
 
 
@@ -107,3 +108,11 @@ class BiometricSerializer(serializers.ModelSerializer):
         # Save the instance to the database
         instance.save()
         return instance
+
+
+class UserTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserTransaction
+        fields = [
+            'user', 'date_time_created', 'type', 'description'
+        ]

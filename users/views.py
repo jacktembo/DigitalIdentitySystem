@@ -36,3 +36,11 @@ class BiometricsViewSet(viewsets.ModelViewSet):
     queryset = Biometrics.objects.all()
     serializer_class = BiometricSerializer
 
+
+class UserTransactionViewSet(viewsets.ModelViewSet):
+    """
+    Transactions made by or to the user's account.
+    """
+    queryset = UserTransaction.objects.all()
+    serializer_class = UserTransactionSerializer
+
