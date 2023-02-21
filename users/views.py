@@ -78,3 +78,4 @@ class BiometricLogin(APIView):
             token = get_object_or_404(Token, user=user).key
             return Response({'token': token})
 
+
