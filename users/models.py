@@ -5,8 +5,7 @@ from django.dispatch import receiver
 
 
 class UserDetails(models.Model):
-    """
-    Personal details about the user who is registering with the system.
+    """ Personal details about the user who is registering with the system.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     date_of_birth = models.DateField(blank=True, null=True)
