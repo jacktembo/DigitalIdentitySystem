@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import BiometricLogin
+from users.views import *
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -27,4 +27,5 @@ urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
     path('auth/', include('djoser.urls.jwt')),
     path('auth/biometric-login', BiometricLogin.as_view()),
+    path('auth/website-login', WebsiteLoginView.as_view()),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
