@@ -119,3 +119,21 @@ class UserTransaction(models.Model):
     date_time_created = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
+
+
+class UserWallet(models.Model):
+    """
+    User Account built in Wallet: users can deposit funds into their digital identity wallet
+    and use the funds to pay for various products and services across the digital
+    identity network. Funds can be deposited using mobile money, cash, bank transfer,
+    etc.
+
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    available_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.0)
+    maximum_balance = models.DecimalField(max_digits=12, decimal_places=2, default=100000)
+
+    def __str__(self):
+        return f"{self.user.username} Account"
+
+

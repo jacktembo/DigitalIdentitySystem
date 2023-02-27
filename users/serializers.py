@@ -125,3 +125,11 @@ class UserTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Token
         fields = ['token',]
+
+
+class UserWalletSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserWallet
+        fields = [
+            'user', 'available_balance', 'maximum_balance'
+        ]
