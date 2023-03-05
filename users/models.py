@@ -137,3 +137,28 @@ class UserWallet(models.Model):
         return f"{self.user.username} Account"
 
 
+class OtherUserDetails(models.Model):
+    """
+    Other user details that were not listed in UserDetails model. This includes
+    any other information about the user that is not listed.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    detail_key = models.CharField(max_length=255) # The name or title of that key. For example: first_name
+    detail_value = models.CharField(max_length=255) # The value for the key mentioned above. For example: Jack
+
+    def __str__(self):
+        return self.detail_key
+
+
+class OtherUserDocument(models.Model):
+    """
+    Other user documents that were not included in the UserDocument model.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    document_name = models.CharField(max_length=255)
+    document_file = models.FileField(upload_to='users/OtherDocuments')
+    description = models.TextField()
+
+    def __str__(self):
+        return self.document_name
+

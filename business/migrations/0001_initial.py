@@ -32,11 +32,11 @@ class Migration(migrations.Migration):
             name='InstitutionDocuments',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('incorporation_certificate', models.FileField(upload_to='institutions/IncorporationCertificates')),
+                ('incorporation_certificate', models.FileField(upload_to='business/IncorporationCertificates')),
                 ('tax_payer_identification', models.FileField(upload_to='institution/tpin')),
                 ('profile', models.FileField(upload_to='institution/profile')),
                 ('articles_of_association', models.FileField(upload_to='institution/Articles')),
-                ('institution', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='institutions.institution')),
+                ('institution', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='business.institution')),
             ],
         ),
     ]
