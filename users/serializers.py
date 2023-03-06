@@ -133,3 +133,21 @@ class UserWalletSerializer(serializers.ModelSerializer):
         fields = [
             'user', 'available_balance', 'maximum_balance'
         ]
+
+
+class OtherUserDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OtherUserDetails
+        fields = [
+            'user', 'detail_key', 'detail_value'
+        ]
+
+
+class OtherUserDocumentsSerializer(serializers.ModelSerializer):
+    document_file = serializers.FileField(use_url=True)
+    class Meta:
+        model = OtherUserDocument
+        fields = [
+            'user', 'document_name', 'description', 'document_file',
+        ]
+

@@ -6,11 +6,13 @@ from .views import *
 
 
 router = DefaultRouter()
-router.register(r'details', UserDetailsViewSet)
-router.register(r'documents', UserDocumentViewSet)
-router.register(r'biometrics', BiometricsViewSet)
-router.register(r'transactions', UserTransactionViewSet)
-router.register(r'wallets',UserWalletViewSet)
+router.register(r'details', UserDetailsViewSet, basename='details')
+router.register(r'documents', UserDocumentViewSet, basename='documents')
+router.register(r'biometrics', BiometricsViewSet, basename='biometrics')
+router.register(r'transactions', UserTransactionViewSet, basename='transactions')
+router.register(r'wallets',UserWalletViewSet, basename='wallets')
+router.register(r'other-details', OtherUserDetailsViewSet, basename='other-details')
+router.register(r'other-documents', OtherUserDocumentViewSet, basename='other-documentss')
 
 
 urlpatterns = [

@@ -1,9 +1,42 @@
 from django.contrib.auth import authenticate
+from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from .serializers import *
+
+
+class ReadOnlyNonSuperuserPermission(permissions.BasePermission):
+    """
+    Custom permission to allow only superusers to create, delete and update objects.
+    Other authenticated users can only perform safe operations such as GET, HEAD, OPTIONS.
+    """
+
+    def has_permission(self, request, view):
+        unsafe_request_methods = ['DELETE', 'PUT', 'POST', 'PATCH']
+        safe_request_methods = ['GET', 'HEAD']
+        # Allow POST, PUT, PATCH and DELETE methods only to superusers.
+        if request.method in unsafe_request_methods and request.user.is_superuser:
+            return True
+        elif request.method in safe_request_methods:
+            return True
+        return False
+
+
+def get_user_queryset(request, model) -> QuerySet:
+    """
+    Get a queryset depending on whether the requesting user is superuser. If is superuser,
+    return all the matching objects. Otherwise, only return objects owned by the requesting user.
+    :param request:
+    :param model:
+    :return:
+    """
+    user = request.user
+    if user.is_superuser:
+        return model.objects.all()
+    return model.objects.filter(user=user)
 
 
 class UserDetailsViewSet(viewsets.ModelViewSet):
@@ -12,16 +45,20 @@ class UserDetailsViewSet(viewsets.ModelViewSet):
     UserDetails objects.
     You can get a specific user using the 'national_id_number' lookup field.
     """
-    queryset = UserDetails.objects.all()
+
+    def get_queryset(self):
+        return get_user_queryset(self.request, UserDetails)
 
     serializer_class = UserDetailsSerializer
-
-    lookup_field = 'national_id_number'
+    permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
 
 
 class UserDocumentViewSet(viewsets.ModelViewSet):
-    queryset = UserDocuments.objects.all()
+    def get_queryset(self):
+        return get_user_queryset(self.request, UserDocuments)
+
     serializer_class = UserDocumentSerializer
+    permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
 
 
 class BiometricsViewSet(viewsets.ModelViewSet):
@@ -29,16 +66,24 @@ class BiometricsViewSet(viewsets.ModelViewSet):
     The biometrics data for each field are passed as base64 encoded string,
     and then saved as a Binary data in the database.
     """
-    queryset = Biometrics.objects.all()
+
+    def get_queryset(self):
+        return get_user_queryset(self.request, Biometrics)
+
     serializer_class = BiometricSerializer
+    permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
 
 
 class UserTransactionViewSet(viewsets.ModelViewSet):
     """
     Transactions made by or to the user's account.
     """
-    queryset = UserTransaction.objects.all()
+
+    def get_queryset(self):
+        return get_user_queryset(self.request, UserTransaction)
+
     serializer_class = UserTransactionSerializer
+    permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
 
 
 class BiometricLogin(APIView):
@@ -184,11 +229,31 @@ class WebsiteLoginView(APIView):
 
 
 class UserWalletViewSet(viewsets.ModelViewSet):
-    queryset = UserWallet.objects.all()
+    def get_queryset(self):
+        return get_user_queryset(self.request, UserWallet)
 
     def get_serializer_class(self):
         return UserWalletSerializer
 
     lookup_field = 'user'
+    permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
 
 
+class OtherUserDetailsViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        return get_user_queryset(self.request, OtherUserDetails)
+
+    def get_serializer_class(self):
+        return OtherUserDetailsSerializer
+
+    permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
+
+
+class OtherUserDocumentViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        return get_user_queryset(self.request, OtherUserDocument)
+
+    def get_serializer_class(self):
+        return OtherUserDocumentsSerializer
+
+    permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
