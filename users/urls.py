@@ -11,6 +11,8 @@ router.register(r'documents', UserDocumentViewSet)
 router.register(r'biometrics', BiometricsViewSet)
 router.register(r'transactions', UserTransactionViewSet)
 router.register(r'wallets',UserWalletViewSet)
+router.register(r'other-details', OtherUserDetailsViewSet)
+router.register(r'other-documents', OtherUserDocumentViewSet)
 
 
 urlpatterns = [

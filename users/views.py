@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from .serializers import *
 
 
@@ -192,3 +193,15 @@ class UserWalletViewSet(viewsets.ModelViewSet):
     lookup_field = 'user'
 
 
+class OtherUserDetailsViewSet(viewsets.ModelViewSet):
+    queryset = OtherUserDetails.objects.all()
+
+    def get_serializer_class(self):
+        return OtherUserDetailsSerializer
+
+
+class OtherUserDocumentViewSet(viewsets.ModelViewSet):
+    queryset = OtherUserDocument.objects.all()
+
+    def get_serializer_class(self):
+        return OtherUserDocumentsSerializer
