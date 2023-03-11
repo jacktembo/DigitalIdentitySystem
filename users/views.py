@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from django.db.models import QuerySet
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -41,7 +41,7 @@ def get_user_queryset(request, model) -> QuerySet:
 
 class UserDetailsViewSet(viewsets.ModelViewSet):
     """
-    This Router is responsible for creating, reading, updating, and deleting
+    This Viewset is responsible for creating, reading, updating, and deleting
     UserDetails objects.
     You can get a specific user using the 'national_id_number' lookup field.
     """
@@ -125,13 +125,18 @@ class BiometricLogin(APIView):
             return Response({'token': token})
 
 
-class WebsiteLoginView(APIView):
+class OAuth(APIView):
     """
     This endpoint allows users to signup and sign in to various websites
     and apps using digital identity. The user is redirected to the digital
     identity login page, and logs in using their username and password combination,
-    or their biometrics such as fingerprint. After successful login, we shall return
-    the required personal details about the user.
+    or their biometrics such as fingerprint. After successful login,
+    the user will grant access of their data to the third party application,
+     and we shall make a POST request to the provided call back URL passing the
+     user data and the certain token in the Post request. The third party application must save
+     the token we POST, and each time a user logs in with digital identity, we shall be returning
+     this token. The callback URL must return a redirect URl in the response, where we shall finally
+    redirect the user.
     """
 
     def post(self, request, format=None):
@@ -257,3 +262,10 @@ class OtherUserDocumentViewSet(viewsets.ModelViewSet):
         return OtherUserDocumentsSerializer
 
     permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
+
+
+def oauth_login(request):
+    if request.method == 'GET':
+        context = {}
+        return render(request, 'OAuth_login.html', context)
+

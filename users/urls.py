@@ -6,16 +6,17 @@ from .views import *
 
 
 router = DefaultRouter()
-router.register(r'details', UserDetailsViewSet, basename='details')
-router.register(r'documents', UserDocumentViewSet, basename='documents')
-router.register(r'biometrics', BiometricsViewSet, basename='biometrics')
-router.register(r'transactions', UserTransactionViewSet, basename='transactions')
-router.register(r'wallets',UserWalletViewSet, basename='wallets')
-router.register(r'other-details', OtherUserDetailsViewSet, basename='other-details')
-router.register(r'other-documents', OtherUserDocumentViewSet, basename='other-documentss')
+router.register(r'details', UserDetailsViewSet, basename='user-details')
+router.register(r'documents', UserDocumentViewSet, basename='user-documents')
+router.register(r'biometrics', BiometricsViewSet, basename='user-biometrics')
+router.register(r'transactions', UserTransactionViewSet, basename='user-transactions')
+router.register(r'wallets', UserWalletViewSet, basename='user-wallets')
+router.register(r'other-details', OtherUserDetailsViewSet, basename='other-user-details')
+router.register(r'other-documents', OtherUserDocumentViewSet, basename='other-user-documents')
 
 
 urlpatterns = [
     path('', include(router.urls)),
     path('biometric-login', views.BiometricLogin.as_view()),
+    path('OAuth', views.oauth_login, name='oauth-login'),
 ]

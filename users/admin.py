@@ -10,3 +10,7 @@ admin.AdminSite.site_title = 'Digital Identity'
 @admin.register(UserDetails)
 class UserDetailsAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(OtherUserDetails)
+class OtherUserDetailsAdmin(admin.ModelAdmin):
+    pass

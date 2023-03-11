@@ -63,6 +63,7 @@ class OtherBusinessDocuments(models.Model):
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
     document_name = models.CharField(max_length=255)
     document_file = models.FileField(upload_to='business/OtherDocuments')
+    description = models.TextField()
 
 
 class BusinessWallet(models.Model):
@@ -72,4 +73,11 @@ class BusinessWallet(models.Model):
 
     def __str__(self):
         return f"{self.business} Account"
+
+
+class Transaction(models.Model):
+    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    date_time_created = models.DateTimeField(auto_now_add=True)
+    transaction_type = models.CharField(max_length=255)
+    description = models.TextField()
 

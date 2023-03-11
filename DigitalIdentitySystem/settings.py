@@ -63,7 +63,7 @@ ROOT_URLCONF = 'DigitalIdentitySystem.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR/'templates', BASE_DIR/'users/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,12 +82,29 @@ WSGI_APPLICATION = 'DigitalIdentitySystem.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
+# development database for simple development
+dev_db = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# Production database for complex testing and deployment
+prod_db = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': '30970084',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
+DATABASES = prod_db
+
 
 
 # Password validation

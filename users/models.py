@@ -117,7 +117,7 @@ class UserTransaction(models.Model):
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_time_created = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(max_length=255)
+    transaction_type = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
 
 
@@ -162,3 +162,17 @@ class OtherUserDocument(models.Model):
     def __str__(self):
         return self.document_name
 
+
+class DigitalIdentityCard(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    registration_number = models.CharField(max_length=50)
+    full_name = models.CharField(max_length=255)
+    card_number = models.CharField(max_length=255)
+    date_of_birth = models.DateField()
+    place_of_birth = models.CharField(max_length=255)
+    sex = models.CharField(max_length=50)
+    mother_or_father_place_of_bith = models.CharField(max_length=255)
+    district = models.CharField(max_length=255)
+    chief = models.CharField(max_length=255)
+    village = models.CharField(max_length=255)
+    registration_date = models.DateField(auto_now_add=True)

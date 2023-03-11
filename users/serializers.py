@@ -116,7 +116,7 @@ class UserTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserTransaction
         fields = [
-            'user', 'date_time_created', 'type', 'description'
+            'user', 'date_time_created', 'transaction_type', 'description'
         ]
 
 
