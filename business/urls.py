@@ -12,5 +12,5 @@ router.register(r'wallets', views.BusinessWalletViewSet, basename='wallets')
 router.register(r'transactions', views.TransactionViewSet, basename='transactions')
 
 urlpatterns = [
-    path('/', include(router.urls)),
+    path('', include(router.urls)),
 ]

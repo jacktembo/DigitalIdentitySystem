@@ -16,14 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from users.views import *
-
+from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('', views.Index.as_view(), name='index'),
     path('admin/', admin.site.urls),
-    path('users/', include('users.urls')),
-    path('business', include('business.urls')),
+    path('personal/', include('users.urls')),
+    path('business/', include('business.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('auth/', include('djoser.urls.jwt')),

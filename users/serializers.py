@@ -1,8 +1,9 @@
+import base64
+
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
 from .models import *
-import base64
 
 
 class UserDetailsSerializer(serializers.ModelSerializer):
@@ -122,9 +123,10 @@ class UserTransactionSerializer(serializers.ModelSerializer):
 
 class UserTokenSerializer(serializers.ModelSerializer):
     token = serializers.CharField(source='key')
+
     class Meta:
         model = Token
-        fields = ['token',]
+        fields = ['token', ]
 
 
 class UserWalletSerializer(serializers.ModelSerializer):
@@ -145,9 +147,31 @@ class OtherUserDetailsSerializer(serializers.ModelSerializer):
 
 class OtherUserDocumentsSerializer(serializers.ModelSerializer):
     document_file = serializers.FileField(use_url=True)
+
     class Meta:
         model = OtherUserDocument
         fields = [
             'user', 'document_name', 'description', 'document_file',
         ]
 
+
+class DigitalIdentityCardSerializer(serializers.ModelSerializer):
+    first_name = serializers.SerializerMethodField(method_name='get_first_name')
+    last_name = serializers.SerializerMethodField(method_name='get_last_name')
+    date_of_birth = serializers.SerializerMethodField(method_name='get_dob')
+
+    def get_first_name(self, identity_card: DigitalIdentityCard):
+        return identity_card.user.first_name
+
+    def get_last_name(self, identity_card: DigitalIdentityCard):
+        return identity_card.user.last_name
+
+    def get_dob(self, identity_card: DigitalIdentityCard):
+        return identity_card.user.userdetails.date_of_birth
+
+    class Meta:
+        model = DigitalIdentityCard
+        fields = [
+            'user', 'first_name', 'last_name', 'date_of_birth',
+            'registration_number', 'card_number', 'registration_date'
+        ]

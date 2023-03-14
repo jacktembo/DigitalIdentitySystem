@@ -164,15 +164,13 @@ class OtherUserDocument(models.Model):
 
 
 class DigitalIdentityCard(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     registration_number = models.CharField(max_length=50)
-    full_name = models.CharField(max_length=255)
     card_number = models.CharField(max_length=255)
-    date_of_birth = models.DateField()
-    place_of_birth = models.CharField(max_length=255)
-    sex = models.CharField(max_length=50)
-    mother_or_father_place_of_bith = models.CharField(max_length=255)
-    district = models.CharField(max_length=255)
-    chief = models.CharField(max_length=255)
-    village = models.CharField(max_length=255)
     registration_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.registration_number
+
+
+

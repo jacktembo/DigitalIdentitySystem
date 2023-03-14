@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import *
 
 
@@ -21,6 +22,7 @@ class BusinessDocumentsSerializer(serializers.ModelSerializer):
             'id', 'business', 'incorporation_certificate', 'tax_payer_identification',
             'profile', 'articles_of_association', 'bank_statement', 'logo',
         ]
+
 
 class OtherBusinessDetailsSerializer(serializers.ModelSerializer):
     class Meta:

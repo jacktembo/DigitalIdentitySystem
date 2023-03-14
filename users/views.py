@@ -1,7 +1,10 @@
+from _decimal import Decimal
+
 from django.contrib.auth import authenticate
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404, render
-from rest_framework import viewsets, permissions
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -51,6 +54,7 @@ class UserDetailsViewSet(viewsets.ModelViewSet):
 
     serializer_class = UserDetailsSerializer
     permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
 
 
 class UserDocumentViewSet(viewsets.ModelViewSet):
@@ -269,3 +273,93 @@ def oauth_login(request):
         context = {}
         return render(request, 'OAuth_login.html', context)
 
+
+class DigitalIdentityCardViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        return get_user_queryset(self.request, DigitalIdentityCard)
+
+    def get_serializer_class(self):
+        return DigitalIdentityCardSerializer
+
+    permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
+
+
+class WalletTopUp(APIView):
+    """
+    Deposit funds into user wallet.
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request, format=None):
+        """
+        :data recipient_username, amount
+        :param request:
+        :param format:
+        :return:
+        """
+        # Get the user's wallet from the request user
+        user_wallet = UserWallet.objects.get(user__username=request.data.get('recipient_username'))
+
+        # Get the amount to top up from the request data
+        amount = request.data.get('amount', None)
+
+        # Ensure amount is provided and valid
+        if amount is None:
+            return Response({'error': 'Amount is required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            amount = Decimal(amount)
+        except ValueError:
+            return Response({'error': 'Invalid amount'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Ensure top up amount is within the maximum balance limit
+        if user_wallet.available_balance + amount > user_wallet.maximum_balance:
+            return Response({'error': 'Maximum balance exceeded'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update the user's balance
+        user_wallet.available_balance += amount
+        user_wallet.save()
+
+        # Return a success response
+        return Response({'success': 'Top-up successful'}, status=status.HTTP_200_OK)
+
+
+class SendMoney(APIView):
+    def post(self, request, format=None):
+        # Get the sender and recipient's wallets from the request data
+        sender_wallet = UserWallet.objects.get(user=request.user)
+        recipient_username = request.data.get('recipient', None)
+        if recipient_username is None:
+            return Response({'error': 'Recipient is required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            recipient_user = User.objects.get(username=recipient_username)
+            recipient_wallet = UserWallet.objects.get(user=recipient_user)
+        except (User.DoesNotExist, UserWallet.DoesNotExist):
+            return Response({'error': 'Invalid recipient'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get the amount to send from the request data
+        amount = request.data.get('amount', None)
+
+        # Ensure amount is provided and valid
+        if amount is None:
+            return Response({'error': 'Amount is required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            amount = Decimal(amount)
+        except ValueError:
+            return Response({'error': 'Invalid amount'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Ensure sender has sufficient funds
+        if amount > sender_wallet.available_balance:
+            return Response({'error': 'Insufficient funds'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Ensure recipient maximum balance is not exceeded
+        if recipient_wallet.available_balance + amount > recipient_wallet.maximum_balance:
+            return Response({'error': 'Recipient maximum balance exceeded'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Transfer funds from sender to recipient
+        sender_wallet.available_balance -= amount
+        recipient_wallet.available_balance += amount
+        sender_wallet.save()
+        recipient_wallet.save()
+
+        # Return a success response
+        return Response({'success': 'Money sent successfully'}, status=status.HTTP_200_OK)
