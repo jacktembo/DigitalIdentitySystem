@@ -288,7 +288,7 @@ class WalletTopUp(APIView):
     """
     Deposit funds into user wallet.
     """
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [ReadOnlyNonSuperuserPermission]
 
     def post(self, request, format=None):
         """
