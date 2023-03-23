@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'DigitalIdentitySystem',
     'business',
     'users',
     'utils',
@@ -170,3 +171,12 @@ SIMPLE_JWT = {
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.jacktembo.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'jack@jacktembo.com'
+EMAIL_HOST_PASSWORD = 'Jack2022!'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False

@@ -32,6 +32,10 @@ class Business(models.Model):
 
 
 class BusinessDocuments(models.Model):
+    """
+    Business documents that are required for the business to be registered on the system.
+    These documents are required for the business to be verified.
+    """
     business = models.OneToOneField(Business, on_delete=models.CASCADE)
     incorporation_certificate = models.FileField(upload_to='business/IncorporationCertificates')
     tax_payer_identification = models.FileField(upload_to='institution/tpin')
@@ -67,6 +71,10 @@ class OtherBusinessDocuments(models.Model):
 
 
 class BusinessWallet(models.Model):
+    """
+    business wallet that is used to store the business's digital money.
+     This is the wallet that is used to pay for services on the system.
+    """
     business = models.OneToOneField(Business, on_delete=models.CASCADE)
     available_balance = models.DecimalField(max_digits=12, decimal_places=2)
     maximum_balance = models.DecimalField(max_digits=12, decimal_places=2)
@@ -76,8 +84,13 @@ class BusinessWallet(models.Model):
 
 
 class Transaction(models.Model):
+    """
+    A transaction that is made by a business.
+    """
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
     date_time_created = models.DateTimeField(auto_now_add=True)
     transaction_type = models.CharField(max_length=255)
     description = models.TextField()
 
+    def __str__(self):
+        return f"{self.business} {self.transaction_type} {self.date_time_created}"

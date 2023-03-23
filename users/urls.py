@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
+
+from common import utils
 from . import views
 from rest_framework.routers import DefaultRouter
 from .views import *
-
 
 router = DefaultRouter()
 router.register(r'details', UserDetailsViewSet, basename='user-details')
@@ -22,4 +23,5 @@ urlpatterns = [
     path('OAuth', views.oauth_login, name='oauth-login'),
     path('wallet-topup/', views.WalletTopUp.as_view()),
     path('send-money', views.SendMoney.as_view()),
+    path('send-email', utils.SendEmailAPIView.as_view()),
 ]

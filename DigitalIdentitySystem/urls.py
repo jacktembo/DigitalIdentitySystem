@@ -23,11 +23,11 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', views.Index.as_view(), name='index'),
     path('admin/', admin.site.urls),
-    path('personal/', include('users.urls')),
-    path('business/', include('business.urls')),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
-    path('auth/', include('djoser.urls.jwt')),
-    path('auth/biometric-login', BiometricLogin.as_view()),
-    path('auth/OAuth', OAuth.as_view()),
+    path('api/personal/', include('users.urls')),
+    path('api/business/', include('business.urls')),
+    path('api/auth/', include('djoser.urls')),
+    path('api/auth/', include('djoser.urls.authtoken')),
+    path('api/auth/', include('djoser.urls.jwt')),
+    path('api/auth/biometric-login', BiometricLogin.as_view()),
+    path('api/auth/OAuth', OAuth.as_view()),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

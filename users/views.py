@@ -1,6 +1,8 @@
+import random
 from _decimal import Decimal
 
 from django.contrib.auth import authenticate
+from django.core.mail import send_mail
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404, render
 from django_filters.rest_framework import DjangoFilterBackend
@@ -324,6 +326,9 @@ class WalletTopUp(APIView):
 
 
 class SendMoney(APIView):
+    """
+    Send money from one user account to another.
+    """
     def post(self, request, format=None):
         # Get the sender and recipient's wallets from the request data
         sender_wallet = UserWallet.objects.get(user=request.user)
@@ -363,3 +368,4 @@ class SendMoney(APIView):
 
         # Return a success response
         return Response({'success': 'Money sent successfully'}, status=status.HTTP_200_OK)
+
