@@ -44,7 +44,6 @@ class BusinessDocuments(models.Model):
     bank_statement = models.FileField(upload_to='business/BankStatement', null=True, blank=True)
     logo = models.ImageField(upload_to='business/logos', blank=True, null=True)
 
-
     def __str__(self):
         return self.business
 
@@ -94,3 +93,20 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.business} {self.transaction_type} {self.date_time_created}"
+
+
+class BusinessBiometrics(models.Model):
+    """
+    Biometrics of persons that own the business. These biometrics can be fingerprint, iris, face, etc.
+    One person can log in to different businesses using the same biometrics.
+
+    """
+    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    fingerprint = models.BinaryField(blank=True, null=True, unique=True)
+    face = models.BinaryField(blank=True, null=True, unique=True)
+    iris = models.BinaryField(blank=True, null=True, unique=True)
+    voice = models.BinaryField(blank=True, null=True, unique=True)
+
+    def __str__(self):
+        return f"{self.business} {self.user}"

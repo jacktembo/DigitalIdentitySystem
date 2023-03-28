@@ -119,3 +119,15 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     serializer_class = TransactionSerializer
     permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]
+
+
+class BusinessBiometricsViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for listing, creating, updating and deleting business biometrics.
+    """
+
+    def get_queryset(self):
+        return get_business_queryset(self.request, BusinessBiometrics)
+
+    serializer_class = BusinessBiometricsSerializer
+    permission_classes = [ReadOnlyNonSuperuserPermission, permissions.IsAuthenticated]

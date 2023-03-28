@@ -10,6 +10,7 @@ router.register(r'other-details', views.OtherBusinessDetailsViewSet, basename='o
 router.register(r'other-documents', views.OtherBusinessDocumentsViewSet, basename='other-documents')
 router.register(r'wallets', views.BusinessWalletViewSet, basename='wallets')
 router.register(r'transactions', views.TransactionViewSet, basename='transactions')
+router.register(r'biometrics', views.BusinessBiometricsViewSet, basename='biometrics')
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -1,3 +1,5 @@
+import base64
+
 from rest_framework import serializers
 
 from .models import *
@@ -54,3 +56,58 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = [
             'business', 'id', 'date_time_created', 'transaction_type', 'description',
         ]
+
+
+class BusinessBiometricsSerializer(serializers.ModelSerializer):
+    fingerprint = serializers.CharField(required=False)
+    face = serializers.CharField(required=False)
+    iris = serializers.CharField(required=False)
+    voice = serializers.CharField(required=False)
+
+    class Meta:
+        model = BusinessBiometrics
+        fields = [
+            'business', 'user', 'fingerprint', 'face', 'voice', 'iris',
+        ]
+
+    def create(self, validated_data):
+        """
+        The string data passed to the api should be base64 encoded, and then
+        it's decoded as binary data before being saved. Clients should always
+        encode the string to base64 before sending it to the API.
+        :param validated_data:
+        :return:
+        """
+        # Decode the base64 encoded data
+        global fingerprint, face, iris, voice
+        if 'fingerprint' in validated_data:
+            fingerprint = base64.b64decode(validated_data['fingerprint'])
+        if 'face' in validated_data:
+            face = base64.b64decode(validated_data['face'])
+        if 'iris' in validated_data:
+            iris = base64.b64decode(validated_data['iris'])
+        if 'voice' in validated_data:
+            voice = base64.b64decode(validated_data['voice'])
+
+        user = validated_data.get('user', None)
+        business = validated_data.get('business', None)
+        # Create an instance of the model
+        instance = BusinessBiometrics()
+        # Set the properties of the model
+        if 'fingerprint' in validated_data:
+            instance.fingerprint = fingerprint
+        if 'face' in validated_data:
+            instance.face = face
+        if 'iris' in validated_data:
+            instance.iris = iris
+        if 'voice' in validated_data:
+            instance.voice = voice
+        if user is not None:
+            instance.user = user
+        if business is not None:
+            instance.business = business
+        # Save the instance to the database
+        instance.save()
+        return instance
+
+
