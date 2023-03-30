@@ -72,42 +72,49 @@ class BusinessBiometricsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        The string data passed to the api should be base64 encoded, and then
-        it's decoded as binary data before being saved. Clients should always
-        encode the string to base64 before sending it to the API.
+        Overide the create method to convert the base64 data to binary.
         :param validated_data:
         :return:
         """
-        # Decode the base64 encoded data
-        global fingerprint, face, iris, voice
-        if 'fingerprint' in validated_data:
-            fingerprint = base64.b64decode(validated_data['fingerprint'])
-        if 'face' in validated_data:
-            face = base64.b64decode(validated_data['face'])
-        if 'iris' in validated_data:
-            iris = base64.b64decode(validated_data['iris'])
-        if 'voice' in validated_data:
-            voice = base64.b64decode(validated_data['voice'])
-
-        user = validated_data.get('user', None)
+        fingerprint = validated_data.get('fingerprint', None)
+        if fingerprint:
+            fingerprint = base64.b64decode(fingerprint)
+        face = validated_data.get('face', None)
+        if face:
+            face = base64.b64decode(face)
+        iris = validated_data.get('iris', None)
+        if iris:
+            iris = base64.b64decode(iris)
+        voice = validated_data.get('voice', None)
+        if voice:
+            voice = base64.b64decode(voice)
         business = validated_data.get('business', None)
-        # Create an instance of the model
+        user = validated_data.get('user', None)
+
         instance = BusinessBiometrics()
-        # Set the properties of the model
-        if 'fingerprint' in validated_data:
-            instance.fingerprint = fingerprint
-        if 'face' in validated_data:
-            instance.face = face
-        if 'iris' in validated_data:
-            instance.iris = iris
-        if 'voice' in validated_data:
-            instance.voice = voice
-        if user is not None:
-            instance.user = user
-        if business is not None:
-            instance.business = business
-        # Save the instance to the database
+        instance.fingerprint = fingerprint
+        instance.face = face
+        instance.iris = iris
+        instance.voice = voice
+        instance.business = business
+        instance.user = user
+
         instance.save()
         return instance
 
-
+    def to_representation(self, instance):
+        """
+        The binary data is converted to base64 before being sent to the client.
+        :param instance:
+        :return:
+        """
+        representation = super().to_representation(instance)
+        if instance.fingerprint:
+            representation['fingerprint'] = base64.b64encode(instance.fingerprint).decode('utf-8')
+        if instance.face:
+            representation['face'] = base64.b64encode(instance.face).decode('utf-8')
+        if instance.iris:
+            representation['iris'] = base64.b64encode(instance.iris).decode('utf-8')
+        if instance.voice:
+            representation['voice'] = base64.b64encode(instance.voice).decode('utf-8')
+        return representation

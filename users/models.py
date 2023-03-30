@@ -102,7 +102,7 @@ class Biometrics(models.Model):
     This is the models for all the biometrics of the user.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    fingerprint = models.BinaryField(unique=True)
+    fingerprint = models.BinaryField(unique=True, null=True, blank=True)
     face = models.BinaryField(blank=True, null=True, unique=True)
     iris = models.BinaryField(blank=True, null=True, unique=True)
     voice = models.BinaryField(blank=True, null=True, unique=True)

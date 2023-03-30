@@ -95,11 +95,21 @@ class BiometricSerializer(serializers.ModelSerializer):
         :return:
         """
         # Decode the base64 encoded data
-        fingerprint = base64.b64decode(validated_data['fingerprint'])
-        face = base64.b64decode(validated_data.get('face', None))
-        iris = base64.b64decode(validated_data.get('iris', None))
-        voice = base64.b64decode(validated_data.get('voice', None))
+        fingerprint = validated_data.get('fingerprint', None)
+        if fingerprint is not None:
+            fingerprint = base64.b64decode(fingerprint)
+        face = validated_data.get('face', None)
+        if face is not None:
+            face = base64.b64decode(face)
+        iris = validated_data.get('iris', None)
+        if iris is not None:
+            iris = base64.b64decode(iris)
+        voice = validated_data.get('voice', None)
+        if voice is not None:
+            voice = base64.b64decode(voice)
+
         user = validated_data.get('user', None)
+
         # Create an instance of the model
         instance = Biometrics()
         # Set the properties of the model
@@ -111,6 +121,23 @@ class BiometricSerializer(serializers.ModelSerializer):
         # Save the instance to the database
         instance.save()
         return instance
+
+    def to_representation(self, instance):
+        """
+        The binary data is encoded to base64 before being sent to the client.
+        :param instance:
+        :return:
+        """
+        representation = super().to_representation(instance)
+        if instance.fingerprint:
+            representation['fingerprint'] = base64.b64encode(instance.fingerprint).decode('utf-8')
+        if instance.face:
+            representation['face'] = base64.b64encode(instance.face).decode('utf-8')
+        if instance.iris:
+            representation['iris'] = base64.b64encode(instance.iris).decode('utf-8')
+        if instance.voice:
+            representation['voice'] = base64.b64encode(instance.voice).decode('utf-8')
+        return representation
 
 
 class UserTransactionSerializer(serializers.ModelSerializer):
