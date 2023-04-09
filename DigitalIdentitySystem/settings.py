@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'DigitalIdentitySystem',
     'business',
     'users',
+    'corporate',
     'utils',
     'internal',
     'rest_framework',
